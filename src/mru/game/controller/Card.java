@@ -1,5 +1,6 @@
 package mru.game.controller;
 
+//to be implemented in BlackjackGame class; related to issue #14, design
 /**
  * This class represents a card
  * @author ksalmani

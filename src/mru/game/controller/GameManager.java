@@ -11,7 +11,7 @@ public class GameManager {
 	 * A method to find the top players
 	 * Depending on your designing technique you may need and you can add more methods here 
 	 */
-
+	//related to: issue #13, design
 	
 
 }

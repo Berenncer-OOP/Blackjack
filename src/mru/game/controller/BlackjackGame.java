@@ -7,4 +7,5 @@ public class BlackjackGame {
 	 * You should use CardDeck class here
 	 * See the instructions for the game rules
 	 */
+	//related to issue #14, design
 }

@@ -3,6 +3,7 @@ package mru.game.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 
+//to be implemented in BlackjackGame class; related to issue #14, design
 /**
  * This class represents a card deck
  * @author ksalmani
@@ -16,7 +17,7 @@ public class CardDeck {
 	private ArrayList <Card> deck;
 	
 	/**
-	 * This constructor initiate the arraylist and calls the repective methods to create a new deck
+	 * This constructor initiate the arraylist and calls the respective methods to create a new deck
 	 */
 	public CardDeck() {
 		deck = new ArrayList<Card>();
