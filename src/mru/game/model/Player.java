@@ -7,4 +7,37 @@ public class Player {
 	 * It is basically a model class for each record in the txt file
 	 */
 	//related to issue #12, design
+	private String name;
+	private int balance;
+	private int numberOfWins;
+	
+	public Player(String name, int balance, int wins) {
+		this.name = name;
+		this.balance = balance;
+		this.numberOfWins = wins;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public void setBalance(int balance) {
+		this.balance = balance;
+	}
+	
+	public void setNumberOfWins(int wins) {
+		this.numberOfWins = wins;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public int getBalance() {
+		return this.balance;
+	}
+	
+	public int getNumberOfWins() {
+		return this.numberOfWins;
+	}
 }
