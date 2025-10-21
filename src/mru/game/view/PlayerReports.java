@@ -4,10 +4,7 @@ import java.util.ArrayList;
 
 import mru.game.model.Player;
 
-public class PlayerReports extends AppMenu{
-	
-	
-
+public class PlayerReports extends InterfaceComponents{
 	
 	//playerSearch
 	public void playerSearchDisplay(Player p) {
