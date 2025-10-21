@@ -30,6 +30,7 @@ public class GameManager {
 	File casinoInfo;
 	
 	//maybe move these objects?
+	private AppMenu appMenu = new AppMenu();
 	private PlayerReports playerReports = new PlayerReports();
 	
 
@@ -39,17 +40,17 @@ public class GameManager {
 		//fileSetup();
 		//loadFileData();
 		
-		AppMenu appMenu = new AppMenu();
+		mainMenuController();
 
 		
 		//testing playerRecords ArrayList:
-		createPlayerRecord("Bernard", 100, 0);
-		createPlayerRecord("Fenna", 100, 0);
-		createPlayerRecord("Spencer", 100, 0);
-		System.out.println(findPlayer("fenna"));
-		playerReports.playerSearchDisplay(findPlayer("Fenna"));
-		appMenu.mainMenu();
-		//BlackjackGame game = new BlackjackGame(setUpPlayer("fenna"));
+//		createPlayerRecord("Bernard", 100, 0);
+//		createPlayerRecord("Fenna", 100, 0);
+//		createPlayerRecord("Spencer", 100, 0);
+//		System.out.println(findPlayer("fenna"));
+//		playerReports.playerSearchDisplay(findPlayer("Fenna"));
+		//appMenu.mainMenu();
+		
 	}
 		
 		
@@ -79,25 +80,80 @@ public class GameManager {
 		fileReader.close();
 	}
 	
-	//add player to playerRecords
-	public void createPlayerRecord(String name, double balance, int wins) {
-		Player currentPlayer = new Player(name, balance, wins);
-		playerRecords.add(currentPlayer);
+	public void mainMenuController() throws IOException {
+		char option;
+		
+		option = appMenu.mainMenu();
+		
+		switch(option) {
+		case 'P':
+			playGame();
+			break;
+		case 'S':
+			search();
+			break;
+		case 'E':
+			saveAndExit();
+			break;
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + option);
+		}
+		
+	}
+	
+	private void search() {
+		char option = appMenu.searchMenu();
+		
+		switch (option) {
+		
+		case 'T': {
+			ArrayList<Player> topPlayers = findTopPlayers();
+			playerReports.topPlayersSearchDisplay(topPlayers);
+		break;
+		}
+		case 'N':{
+			playerReports.playerSearchDisplay(findPlayer(playerReports.promptName()));
+			break;
+		}
+		case 'B':{
+			appMenu.mainMenu();
+			break;
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + option);
+	}
 }
 	
-	// setting up current player when BlackjackGame starts, passing player info back to BlackjackGame.
-	// only passes back balance because balance can go up or down, numOfWins will only be added to after gameplay ends
-	public Player setUpPlayer(String name) {
-		Player currentPlayer = findPlayer(name);
-		if (currentPlayer != null) {
-			return currentPlayer;
-		}  else {
-			createPlayerRecord(name, STARTING_BALANCE, STARTING_WINS);
+	private void saveAndExit() throws IOException {
+		PrintWriter saveFile = new PrintWriter(casinoInfo);
+		for(Player p: playerRecords) {
+			saveFile.println(p.format());
 		}
-		return currentPlayer;
+		saveFile.close();
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	public void playGame() {
+		BlackjackGame game = new BlackjackGame();
+		InterfaceComponents gameDisplay = new InterfaceComponents();
+		String playerName = gameDisplay.promptName();
+    	Player currentPlayer = setUpPlayer(playerName);
+
+    	System.out.println(currentPlayer);
+		game.initializeGame(currentPlayer);
+		//game.play();
+	}
+	
+	
+//playerRecords management	
+
 	// find player by name in players AL; return index location of player in AL
 	// use for player set up at game start
 	// also use for search submenu
@@ -115,6 +171,28 @@ public class GameManager {
 		}
 		return searchResult;
 	}
+	
+	//add player to playerRecords
+	public Player createPlayerRecord(String name, double balance, int wins) {
+		Player currentPlayer = new Player(name, balance, wins);
+		playerRecords.add(currentPlayer);
+		return currentPlayer;
+	}
+	
+	// setting up current player when BlackjackGame starts, passing player info back to BlackjackGame.
+	// only passes back balance because balance can go up or down, numOfWins will only be added to after gameplay ends
+	public Player setUpPlayer(String name) {
+		Player currentPlayer = findPlayer(name);
+		if (currentPlayer != null) {
+			return currentPlayer;
+		}  else {
+			currentPlayer = createPlayerRecord(name, STARTING_BALANCE, STARTING_WINS);
+		}
+		return currentPlayer;
+	}
+	
+	
+
 	
 	public ArrayList<Player> findTopPlayers() {
 		ArrayList<Player> topPlayers = new ArrayList<Player>();
@@ -176,6 +254,7 @@ public class GameManager {
 
 			}
 		}
+		return topPlayers;
 	}
 	
 

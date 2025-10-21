@@ -40,4 +40,8 @@ public class Player {
 	public int getNumberOfWins() {
 		return this.numberOfWins;
 	}
+	
+	public String format() {
+		return name +","+balance+","+numberOfWins;
+	}
 }

@@ -3,6 +3,7 @@ package mru.game.controller;
 import java.util.ArrayList;
 import java.util.Scanner;
 import mru.game.model.Player;
+import mru.game.view.BlackjackInterface;
 
 /**
  * Runs the actual Blackjack game.
@@ -25,6 +26,19 @@ public class BlackjackGame {
         this.deck = new CardDeck();
         this.input = new Scanner(System.in);
         play();
+    }
+    
+    public BlackjackGame() {
+    	//call bjinterf to display and ask for user
+    	//assign to obj
+    	//call play
+    	
+    }
+    
+    public void initializeGame(Player player) {
+    	this.player = player;
+        this.deck = new CardDeck();
+        this.input = new Scanner(System.in);
     }
 
     public void play() {

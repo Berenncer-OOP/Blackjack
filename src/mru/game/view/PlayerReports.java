@@ -42,7 +42,7 @@ public class PlayerReports extends InterfaceComponents{
 		
 	}
 	
-	public void searchTopPlayersMenu(ArrayList<Player> topPlayers) {
+	public void topPlayersSearchDisplay(ArrayList<Player> topPlayers) {
 		int nameFieldLength = 18; //length of report fields
 		int winsFieldLength = 22; //length of report fields
 		
