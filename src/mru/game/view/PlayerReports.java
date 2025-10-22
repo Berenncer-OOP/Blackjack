@@ -53,25 +53,31 @@ public class PlayerReports extends InterfaceComponents{
 		
 	}
 	
-	public void topPlayersSearchDisplay(ArrayList<Player> topPlayers) {
+	public void topPlayersSearchDisplay(Player[] topPlayers) {
 		int nameFieldLength = 18; //length of report fields
 		int winsFieldLength = 22; //length of report fields
-		
-		System.out.println("top players");
-		if (topPlayers.get(0) == null) {
+
+		if (topPlayers[0] == null) {
 			System.out.println("There are no player records to report. Try again later!");
 		} else {
 			System.out.println("                 - TOP PLAYERS - ");
-			System.out.println(intersection + rowSection(headerRow, nameFieldLength) + intersection + rowSection(headerRow, winsFieldLength) + intersection + intersection); //pieces together header row separators
-			
-			System.out.println(column + "NAME" + addSpacing(nameFieldLength, 4) + column + "# WINS" + addSpacing(winsFieldLength, 6)  + column + "BALANCE" + column);
+			//upper header row
+			System.out.println(intersection + rowSection(headerRow, nameFieldLength) 
+			+ intersection + rowSection(headerRow, winsFieldLength) + intersection); 
+			//header row text
+			System.out.println(column + "NAME" + addSpacing(nameFieldLength, 4) 
+			+ column + "# WINS" + addSpacing(winsFieldLength, 6)  + column);
+			//bottom header row
+			System.out.println(intersection + rowSection(headerRow, nameFieldLength) 
+			+ intersection + rowSection(headerRow, winsFieldLength) + intersection); 
 			
 			for (Player topPlayer : topPlayers) {
 				String playerName = topPlayer.getName();
 				String playerWins = String.valueOf(topPlayer.getNumberOfWins());
 				
 				System.out.println(column + playerName + addSpacing(nameFieldLength, playerName.length()) + column + playerWins + addSpacing(winsFieldLength, playerWins.length()) + column);
-				System.out.println(intersection + rowSection(row, nameFieldLength) + intersection + rowSection(row, winsFieldLength) + intersection + intersection);
+				System.out.println(intersection + rowSection(row, nameFieldLength) 
+				+ intersection + rowSection(row, winsFieldLength) + intersection);
 			}
 
 		

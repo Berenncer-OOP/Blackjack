@@ -99,7 +99,7 @@ public class GameManager {
 		switch (option) {
 		
 		case 'T': {
-			ArrayList<Player> topPlayers = findTopPlayers(this.playerRecords);
+			Player[] topPlayers = findTopPlayers(this.playerRecords);
 			System.out.println(playerRecords.get(0).getName());
 			playerReports.topPlayersSearchDisplay(topPlayers);
 			boolean returnToMain = false;
@@ -216,24 +216,41 @@ public class GameManager {
 	
 
 	
-	public ArrayList<Player> findTopPlayers(ArrayList<Player> playerRecords) {
-		ArrayList<Player> topPlayers = new ArrayList<Player>();
-		int listLength = 5;
+	public Player[] findTopPlayers(ArrayList<Player> playerRecords) {
+		//ArrayList<Player> topPlayers = new ArrayList<Player>();
 		
-		for (int i = 0; i < listLength; i++) {
-			Player topPlayer = playerRecords.get(i);
-			
-			topPlayers.add(topPlayer);
-		}
+		int listLength = 5;
+
 		
 		//for each player in playerRecords
 			//check each spot in topPlayers
 			//if player's wins greater than person in spot, insert player in that spot
+//		for (Player player : playerRecords) {
+//			for (int i = 0; i < topPlayers.size(); i++) {
+//				int topWins = topPlayers.get(i).getNumberOfWins();
+//				if (player.getNumberOfWins() > topWins){
+//					topPlayers.add(i, player);
+//					topPlayers.remove(listLength);
+//					System.out.println(player.getName());
+//					break;
+//				}
+//			}
+//		}
+		
+		
+		Player[] topPlayers = new Player[listLength];
+		
+		for (int i = 0; i < listLength; i++) {
+			Player player = playerRecords.get(i);
+			
+			topPlayers[i] = player;
+		}
+		
 		for (Player player : playerRecords) {
-			for (int i = 0; i < topPlayers.size(); i++) {
-				int topWins = topPlayers.get(i).getNumberOfWins();
+			for (int i = 0; i < listLength; i++) {
+				int topWins = topPlayers[i].getNumberOfWins();
 				if (player.getNumberOfWins() > topWins){
-					topPlayers.add(i, player);
+					topPlayers[i] = player;
 					System.out.println(player.getName());
 					break;
 				}
