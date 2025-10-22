@@ -27,7 +27,7 @@ public class GameManager {
 	private final int STARTING_WINS = 0;
 	
 	private final String FILE_PATH = "res/CasinoInfo.txt";
-	File casinoInfo;
+	private File casinoInfo;
 	
 	//maybe move these objects?
 	private AppMenu appMenu = new AppMenu();
@@ -37,40 +37,41 @@ public class GameManager {
 	
 	public GameManager() throws IOException {
 		//commenting out for now because not working and need to troubleshoot with Spencer:
-		//fileSetup();
-		//loadFileData();
+		fileSetup();
+		mainMenuController();
 		
 		
-		setUpPlayer("Bernard");
-		createPlayerRecord("Bernard", 100, 0);
-		createPlayerRecord("Fenna", 100, 0);
-		createPlayerRecord("Spencer", 100, 0);
-		System.out.println(findPlayer("fenna"));
-
-
-		playerReports.playerSearchDisplay(findPlayer("Fenna"));
-		playerReports.playerSearchDisplay(playerRecords.get(3));
+		
+//		setUpPlayer("Bernard");
+//		createPlayerRecord("Bernard", 100, 0);
+//		createPlayerRecord("Fenna", 100, 0);
+//		createPlayerRecord("Spencer", 100, 0);
+//		System.out.println(findPlayer("fenna"));
+//
+//
+//		playerReports.playerSearchDisplay(findPlayer("Fenna"));
+//		playerReports.playerSearchDisplay(playerRecords.get(3));
 		mainMenuController();
 	}
 		
 		
 	//On startup check if file exists: 
 	public void fileSetup() throws IOException {
-		File casinoInfo = new File(FILE_PATH);
+		casinoInfo = new File(FILE_PATH);
 		if (casinoInfo.exists()) {
-			loadFileData();
+			loadFileData(casinoInfo);
 		} else {
 			casinoInfo.createNewFile();
 		}
 	}
 	
 	//load from file to playerRecords
-	public void loadFileData() throws IOException {
+	public void loadFileData(File inputFile) throws IOException {
 		//load 
 		String currentLine;
 		String[] splittedLine;
 		
-		Scanner fileReader = new Scanner(casinoInfo);
+		Scanner fileReader = new Scanner(inputFile);
 		while(fileReader.hasNextLine()) {
 			currentLine = fileReader.nextLine();
 			splittedLine = currentLine.split(",");
@@ -145,14 +146,13 @@ public class GameManager {
 	
 	public void playGame() throws IOException {
 		BlackjackGame game = new BlackjackGame();
-		InterfaceComponents gameDisplay = new InterfaceComponents();
+		BlackjackInterface gameDisplay = new BlackjackInterface();
 		String playerName = gameDisplay.promptName();
     	Player currentPlayer = setUpPlayer(playerName);
 		game.initializeGame(currentPlayer);
 		game.play();
 		currentPlayer.setBalance(game.getPlayerBalance());
 		currentPlayer.setNumberOfWins(game.getPlayerWins());
-		
 		mainMenuController();
 	}
 	
@@ -196,10 +196,6 @@ public class GameManager {
 		return currentPlayer;
 	}
 	
-	public void updatePlayerRecord(Player player) {
-		Player currentPlayer = findPlayer(player.getName());
-		current
-	}
 	
 	// setting up current player when BlackjackGame starts, passing player info back to BlackjackGame.
 	// only passes back balance because balance can go up or down, numOfWins will only be added to after gameplay ends
