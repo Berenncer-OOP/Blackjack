@@ -26,7 +26,7 @@ public class Player {
 	}
 	
 	public void setNumberOfWins(int wins) {
-		this.numberOfWins += wins;
+		this.numberOfWins = wins;
 	}
 	
 	public String getName() {
@@ -44,4 +44,14 @@ public class Player {
 	public String format() {
 		return name +","+balance+","+numberOfWins;
 	}
+	
+	/**
+	 * Adds new wins to existing wins total
+	 * @param wins number of new wins to be added to existing wins total
+	 */
+	public void addWins(int wins) {
+		this.numberOfWins += wins;
+	}
+	
+	
 }

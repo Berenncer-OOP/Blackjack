@@ -21,7 +21,7 @@ public class BlackjackGame {
     private String playerName;
     private double playerBalance;
     private int playerWins;
-    
+    private boolean returningPlayer;
     
     private CardDeck deck;
     private Scanner input;
@@ -31,10 +31,11 @@ public class BlackjackGame {
     	
     }
     
-    public void initializeGame(Player player) {
+    public void initializeGame(Player player, boolean returningPlayer) {
     	this.currentPlayer = player;
     	this.playerName = player.getName();
     	this.playerBalance = player.getBalance();
+    	this.returningPlayer = returningPlayer;
         this.deck = new CardDeck();
         this.input = new Scanner(System.in);
     }
@@ -48,24 +49,24 @@ public class BlackjackGame {
     }
 
     public void play() {
-    	//place bet HERE
-        gameDisplay.blackJackStart(this.playerName);
+        gameDisplay.welcomePlayer(this.playerName, this.playerBalance, this.returningPlayer);
         boolean keepPlaying = true;
 
-        while (keepPlaying) {
+         do {
             if (this.playerBalance < 2) {
                 System.out.println("You don’t have enough money to play.");
                 break;
             }
 
             double bet = getValidBet();
+            gameDisplay.blackJackStart(this.playerName);
             playRound(bet);
 
             System.out.println();
             System.out.print("Play another round? (Y/N): ");
             char again = input.next().toUpperCase().charAt(0);
             keepPlaying = (again == 'Y');
-        }
+        } while (keepPlaying);
 
         System.out.println();
         System.out.println("Leaving the Blackjack table...");
@@ -191,7 +192,7 @@ public class BlackjackGame {
         return deck.getDeck().remove(0);
     }
 
-    private int getHandValue(ArrayList<Card> hand) {
+    public int getHandValue(ArrayList<Card> hand) {
         int total = 0;
         int aces = 0;
 

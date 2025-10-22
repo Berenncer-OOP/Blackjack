@@ -39,19 +39,6 @@ public class GameManager {
 		//commenting out for now because not working and need to troubleshoot with Spencer:
 		fileSetup();
 		mainMenuController();
-		
-		
-		
-//		setUpPlayer("Bernard");
-//		createPlayerRecord("Bernard", 100, 0);
-//		createPlayerRecord("Fenna", 100, 0);
-//		createPlayerRecord("Spencer", 100, 0);
-//		System.out.println(findPlayer("fenna"));
-//
-//
-//		playerReports.playerSearchDisplay(findPlayer("Fenna"));
-//		playerReports.playerSearchDisplay(playerRecords.get(3));
-		mainMenuController();
 	}
 		
 		
@@ -147,9 +134,12 @@ public class GameManager {
 	public void playGame() throws IOException {
 		BlackjackGame game = new BlackjackGame();
 		BlackjackInterface gameDisplay = new BlackjackInterface();
+		
 		String playerName = gameDisplay.promptName();
+		boolean returningPlayer = returningPlayer(findPlayer(playerName));
     	Player currentPlayer = setUpPlayer(playerName);
-		game.initializeGame(currentPlayer);
+
+		game.initializeGame(currentPlayer, returningPlayer);
 		game.play();
 		currentPlayer.setBalance(game.getPlayerBalance());
 		currentPlayer.setNumberOfWins(game.getPlayerWins());
@@ -157,11 +147,13 @@ public class GameManager {
 	}
 	
 	private void saveAndExit() throws IOException {
+		appMenu.fileSaving();
 		PrintWriter saveFile = new PrintWriter(casinoInfo);
 		for(Player p: playerRecords) {
 			saveFile.println(p.format());
 		}
 		saveFile.close();
+		appMenu.fileSaved();
 	}
 	
 	
@@ -195,6 +187,17 @@ public class GameManager {
 		playerRecords.add(currentPlayer);
 		return currentPlayer;
 	}
+	
+	//set True if player is returning player
+  	public boolean returningPlayer(Player p) {
+  		boolean returningPlayer;
+  		if (p != null) {
+  			returningPlayer = true;
+  		} else {
+  			returningPlayer = false;
+  		}
+  		return returningPlayer;
+  	}
 	
 	
 	// setting up current player when BlackjackGame starts, passing player info back to BlackjackGame.

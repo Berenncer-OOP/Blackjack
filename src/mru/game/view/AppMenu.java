@@ -109,5 +109,13 @@ public class AppMenu {
 		}
 		return validatedOption;
 	}
+	
+	public void fileSaving() {
+		System.out.println("Saving...");
+	}
+	
+	public void fileSaved() {
+		System.out.println("Done! Please visit us again!");
+	}
 
 }
