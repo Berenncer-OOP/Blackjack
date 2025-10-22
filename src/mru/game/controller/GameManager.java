@@ -150,6 +150,9 @@ public class GameManager {
     	Player currentPlayer = setUpPlayer(playerName);
 		game.initializeGame(currentPlayer);
 		game.play();
+		currentPlayer.setBalance(game.getPlayerBalance());
+		currentPlayer.setNumberOfWins(game.getPlayerWins());
+		
 		mainMenuController();
 	}
 	
@@ -191,6 +194,11 @@ public class GameManager {
 		Player currentPlayer = new Player(name, balance, wins);
 		playerRecords.add(currentPlayer);
 		return currentPlayer;
+	}
+	
+	public void updatePlayerRecord(Player player) {
+		Player currentPlayer = findPlayer(player.getName());
+		current
 	}
 	
 	// setting up current player when BlackjackGame starts, passing player info back to BlackjackGame.

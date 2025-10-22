@@ -17,7 +17,7 @@ public class BlackjackGame {
 	 */
 	//related to issue #14, design
 	
-    private Player player;
+    private Player currentPlayer;
     private String playerName;
     private double playerBalance;
     private int playerWins;
@@ -26,24 +26,25 @@ public class BlackjackGame {
     private CardDeck deck;
     private Scanner input;
 	private BlackjackInterface gameDisplay = new BlackjackInterface();
-
-
-//    public BlackjackGame(Player player) {
-//        this.player = player;
-//        this.deck = new CardDeck();
-//        this.input = new Scanner(System.in);
-//        play();
-//    }
     
     public BlackjackGame() {
     	
     }
     
     public void initializeGame(Player player) {
+    	this.currentPlayer = player;
     	this.playerName = player.getName();
     	this.playerBalance = player.getBalance();
         this.deck = new CardDeck();
         this.input = new Scanner(System.in);
+    }
+    
+    public double getPlayerBalance() {
+    	return this.playerBalance;
+    }
+    
+    public int getPlayerWins() {
+    	return this.playerWins;
     }
 
     public void play() {
