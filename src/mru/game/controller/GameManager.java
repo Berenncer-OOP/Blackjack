@@ -26,7 +26,7 @@ public class GameManager {
 	private final double STARTING_BALANCE = 100.00;
 	private final int STARTING_WINS = 0;
 	
-	private final String FILE_PATH = "res/casinoInfo.txt";
+	private final String FILE_PATH = "res/CasinoInfo.txt";
 	File casinoInfo;
 	
 	//maybe move these objects?
@@ -40,17 +40,17 @@ public class GameManager {
 		//fileSetup();
 		//loadFileData();
 		
-		mainMenuController();
+		
+		setUpPlayer("Bernard");
+		createPlayerRecord("Bernard", 100, 0);
+		createPlayerRecord("Fenna", 100, 0);
+		createPlayerRecord("Spencer", 100, 0);
+		System.out.println(findPlayer("fenna"));
 
-		
-		//testing playerRecords ArrayList:
-//		createPlayerRecord("Bernard", 100, 0);
-//		createPlayerRecord("Fenna", 100, 0);
-//		createPlayerRecord("Spencer", 100, 0);
-//		System.out.println(findPlayer("fenna"));
-//		playerReports.playerSearchDisplay(findPlayer("Fenna"));
-		//appMenu.mainMenu();
-		
+
+		playerReports.playerSearchDisplay(findPlayer("Fenna"));
+		playerReports.playerSearchDisplay(playerRecords.get(3));
+		mainMenuController();
 	}
 		
 		
@@ -80,6 +80,10 @@ public class GameManager {
 		fileReader.close();
 	}
 	
+	/**
+	 * Controls program flow using validated output of appMenu.mainMenu() user input. 
+	 * @throws IOException
+	 */
 	public void mainMenuController() throws IOException {
 		char option;
 		
@@ -101,7 +105,7 @@ public class GameManager {
 		
 	}
 	
-	private void search() {
+	private void search() throws IOException {
 		char option = appMenu.searchMenu();
 		
 		switch (option) {
@@ -109,20 +113,45 @@ public class GameManager {
 		case 'T': {
 			ArrayList<Player> topPlayers = findTopPlayers();
 			playerReports.topPlayersSearchDisplay(topPlayers);
+			boolean returnToMain = false;
+			do {
+				returnToMain = playerReports.returnToMainMenu();
+			} while (returnToMain == false);
+			if (returnToMain == true) {
+				mainMenuController();
+			}
 		break;
 		}
 		case 'N':{
-			playerReports.playerSearchDisplay(findPlayer(playerReports.promptName()));
+			Player player = findPlayer(playerReports.promptName());
+			playerReports.playerSearchDisplay(player);
+			boolean returnToMain = false;
+			do {
+				returnToMain = playerReports.returnToMainMenu();
+			} while (returnToMain == false);
+			if (returnToMain == true) {
+				mainMenuController();
+			}
 			break;
 		}
 		case 'B':{
-			appMenu.mainMenu();
+			mainMenuController();
 			break;
 		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + option);
+		}
 	}
-}
+	
+	public void playGame() throws IOException {
+		BlackjackGame game = new BlackjackGame();
+		InterfaceComponents gameDisplay = new InterfaceComponents();
+		String playerName = gameDisplay.promptName();
+    	Player currentPlayer = setUpPlayer(playerName);
+		game.initializeGame(currentPlayer);
+		game.play();
+		mainMenuController();
+	}
 	
 	private void saveAndExit() throws IOException {
 		PrintWriter saveFile = new PrintWriter(casinoInfo);
@@ -134,22 +163,7 @@ public class GameManager {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	public void playGame() {
-		BlackjackGame game = new BlackjackGame();
-		InterfaceComponents gameDisplay = new InterfaceComponents();
-		String playerName = gameDisplay.promptName();
-    	Player currentPlayer = setUpPlayer(playerName);
 
-    	System.out.println(currentPlayer);
-		game.initializeGame(currentPlayer);
-		//game.play();
-	}
 	
 	
 //playerRecords management	
@@ -195,67 +209,23 @@ public class GameManager {
 
 	
 	public ArrayList<Player> findTopPlayers() {
-		ArrayList<Player> topPlayers = new ArrayList<Player>();
+		ArrayList<Player> topPlayers = new ArrayList<Player>(3);
+		int listLength = 3;
 		
+		for (int i = 1; i < listLength; i++) {
+			topPlayers.add(null);
+		}
 		
-		
-		for(int pr = playerRecords.size(); pr >=0; pr--) {
-			
-			for(Player tp: topPlayers) {
-				
-				//initalize topPlayers array so it is not empty
-				if(topPlayers.size() == 0 ||topPlayers.size() == 1 || topPlayers.size() == 2) {
-					topPlayers.add(playerRecords.get(pr));
-					if(topPlayers.size() == 2) {
-						if( topPlayers.get(0).getNumberOfWins() > topPlayers.get(1).getNumberOfWins() && topPlayers.get(0).getNumberOfWins() > topPlayers.get(2).getNumberOfWins()) {
-								
-								//arraylist is in order
-								
-							}
-						//2 & 3rd position > 1
-						else if (topPlayers.get(1).getNumberOfWins() > topPlayers.get(0).getNumberOfWins() && topPlayers.get(2).getNumberOfWins() > topPlayers.get(0).getNumberOfWins()) {
-							//2>3
-							if(topPlayers.get(1).getNumberOfWins() > topPlayers.get(2).getNumberOfWins()) {
-								topPlayers.addLast(topPlayers.get(0));
-								topPlayers.remove(1);
-							}
-							//3>2
-							else {
-								topPlayers.addFirst(topPlayers.get(2));
-								topPlayers.addLast(topPlayers.get(1));
-								topPlayers.remove(1);
-								
-							}
-						}
-						else if(topPlayers.get(1).getNumberOfWins() > topPlayers.get(0).getNumberOfWins() || topPlayers.get(2).getNumberOfWins() > topPlayers.get(0).getNumberOfWins()) {
-							if(topPlayers.get(1).getNumberOfWins() > topPlayers.get(2).getNumberOfWins() ) {
-								if(topPlayers.get(1).getNumberOfWins() > topPlayers.get(0).getNumberOfWins()) {
-									topPlayers.addFirst(topPlayers.get(1));
-									topPlayers.remove(2);
-								}
-							}
-							else if(topPlayers.get(1).getNumberOfWins() < topPlayers.get(2).getNumberOfWins() ) {
-								if(topPlayers.get(2).getNumberOfWins() > topPlayers.get(0).getNumberOfWins()) {
-									topPlayers.addFirst(topPlayers.get(2));
-									topPlayers.remove(3);
-								}
-							}
-						}
-					}
-					break;
+		for (Player player : playerRecords) {
+			for (Player topPlayer : topPlayers) {
+				int placement = topPlayers.indexOf(topPlayer);
+				if (player.getNumberOfWins() > topPlayer.getNumberOfWins()){
+					topPlayers.add(placement, player);
 				}
-				if(topPlayers.get(2).getNumberOfWins() < playerRecords.get(pr).getNumberOfWins()) {
-					if(topPlayers.get(1).getNumberOfWins() < playerRecords.get(pr).getNumberOfWins()) {
-						if(topPlayers.get(0).getNumberOfWins() < playerRecords.get(pr).getNumberOfWins()) {
-							
-						}
-					}
-				}
-
 			}
 		}
+		
 		return topPlayers;
 	}
-	
 
 }
