@@ -216,15 +216,16 @@ public class GameManager {
 		ArrayList<Player> topPlayers = new ArrayList<Player>(3);
 		int listLength = 3;
 		
-		for (int i = 1; i < listLength; i++) {
-			topPlayers.add(null);
+		for (int i = 0; i < listLength; i++) {
+			Player topPlayer = playerRecords.get(i);
+			topPlayers.add(topPlayer);
 		}
 		
 		for (Player player : playerRecords) {
-			for (Player topPlayer : topPlayers) {
-				int placement = topPlayers.indexOf(topPlayer);
-				if (player.getNumberOfWins() > topPlayer.getNumberOfWins()){
-					topPlayers.add(placement, player);
+			for (int i = 0; i < topPlayers.size(); i++) {
+				int topWins = topPlayers.get(i).getNumberOfWins();
+				if (player.getNumberOfWins() > topWins){
+					topPlayers.add(i, player);
 				}
 			}
 		}
