@@ -38,6 +38,7 @@ public class PlayerReports extends InterfaceComponents{
 			System.out.println("                 - PLAYER INFO - ");
 			System.out.println(intersection + rowSection(headerRow, nameFieldLength) + intersection + rowSection(headerRow, winsFieldLength) + intersection + rowSection(headerRow, balanceFieldLength)+ intersection); //pieces together header row separators
 			System.out.println(column + "NAME" + addSpacing(nameFieldLength, 4) + column + "# WINS" + addSpacing(winsFieldLength, 6)  + column + "BALANCE" + addSpacing(balanceFieldLength, 7)+ column);
+			
 			System.out.println(intersection + rowSection(headerRow, nameFieldLength) + intersection + rowSection(headerRow, winsFieldLength) + intersection + rowSection(headerRow, balanceFieldLength)+ intersection); //pieces together header row separators
 			
 			System.out.println(column + playerName + nameSpacing + column + playerWins + winsSpacing + column + playerBalance + balanceSpacing + column);
@@ -56,22 +57,23 @@ public class PlayerReports extends InterfaceComponents{
 		int nameFieldLength = 18; //length of report fields
 		int winsFieldLength = 22; //length of report fields
 		
+		System.out.println("top players");
 		if (topPlayers.get(0) == null) {
 			System.out.println("There are no player records to report. Try again later!");
 		} else {
-		//
-		String topName =  topPlayers.get(0).getName();
-		int topWins = topPlayers.get(0).getNumberOfWins();
-		int spacing = topName.length();
-		String.format(topName);
-		//end of messing
-		
-		
-		
-		System.out.println();
-//		System.out.println("|"+ topPlayers.get(0).getName()+" " +"|"+topPlayers.get(0).getNumberOfWins()+" " + "+" );
-//		System.out.println("|"+ topPlayers.get(1).getName()+" " +"|"+topPlayers.get(1).getNumberOfWins()+" " + "+" );
-		System.out.println();
+			System.out.println("                 - TOP PLAYERS - ");
+			System.out.println(intersection + rowSection(headerRow, nameFieldLength) + intersection + rowSection(headerRow, winsFieldLength) + intersection + intersection); //pieces together header row separators
+			
+			System.out.println(column + "NAME" + addSpacing(nameFieldLength, 4) + column + "# WINS" + addSpacing(winsFieldLength, 6)  + column + "BALANCE" + column);
+			
+			for (Player topPlayer : topPlayers) {
+				String playerName = topPlayer.getName();
+				String playerWins = String.valueOf(topPlayer.getNumberOfWins());
+				
+				System.out.println(column + playerName + addSpacing(nameFieldLength, playerName.length()) + column + playerWins + addSpacing(winsFieldLength, playerWins.length()) + column);
+				System.out.println(intersection + rowSection(row, nameFieldLength) + intersection + rowSection(row, winsFieldLength) + intersection + intersection);
+			}
+
 		
 		}
 		

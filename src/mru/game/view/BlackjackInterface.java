@@ -10,8 +10,9 @@ public class BlackjackInterface extends InterfaceComponents {
     
     private int specialRowLength = 75;
     private int welcomeMessageLength = 23;
-    private int nameFieldLength = 11;
     private int balanceMessageLength = 33;
+    
+    private int cardFieldLength = 16;
     
     private String welcomeReturningPlayer = "Welcome back ";
     private String balanceReturningPlayer = "Your balance is: $";
@@ -52,15 +53,19 @@ public class BlackjackInterface extends InterfaceComponents {
     }
     
     public void blackJackStart(String playerName) {
-        System.out.println(" " + ic.rowSection(" ", 9) +"- BlackJack -"+ ic.rowSection(" ", 9) + " ");
-        System.out.println("+" + ic.rowSection("=", 15) +"+"+ ic.rowSection("=", 15) + "+");
-        System.out.println("||" + playerName +ic.rowSection(" ", 14-playerName.length()) + "|" +  "Dealer"+ ic.rowSection(" ",8 )+ "||" );
-        System.out.println("+" + ic.rowSection("=", 15) +"+"+ ic.rowSection("=", 15) + "+");
+        System.out.println(" " + rowSection(" ", 9) +"- BlackJack -"+ rowSection(" ", 9) + " ");
+        System.out.println("+" + rowSection("=", 15) +"+"+ rowSection("=", 15) + "+");
+        System.out.println("||" + playerName + rowSection(" ", 14-playerName.length()) + "|" +  "Dealer"+ rowSection(" ",8 )+ "||" );
+        System.out.println(intersection + rowSection(headerRow, cardFieldLength) + intersection + rowSection(headerRow, cardFieldLength) + intersection);
     }
     
     public void showHands(String pHand, String dHand) {
-        System.out.println("||" + pHand +ic.rowSection(" ", 14-pHand.length()) + "|" + dHand+ ic.rowSection(" ",15-dHand.length())+ "||" );
-        System.out.println("+" + ic.rowSection("-", 15) +"+"+ ic.rowSection("-", 16) + "+");
+        System.out.println(column+column 
+        + pHand +ic.rowSection(" ", 14-pHand.length()) 
+        + column
+        + dHand+ ic.rowSection(" ",15-dHand.length())
+        + column+column );
+        System.out.println(intersection + rowSection(row, cardFieldLength) + intersection + rowSection(row, cardFieldLength) + intersection);
     }
 
     
