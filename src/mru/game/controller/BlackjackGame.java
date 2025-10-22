@@ -18,36 +18,41 @@ public class BlackjackGame {
 	//related to issue #14, design
 	
     private Player player;
+    private String playerName;
+    private double playerBalance;
+    private int playerWins;
+    
+    
     private CardDeck deck;
     private Scanner input;
+	private BlackjackInterface gameDisplay = new BlackjackInterface();
 
-    public BlackjackGame(Player player) {
-        this.player = player;
-        this.deck = new CardDeck();
-        this.input = new Scanner(System.in);
-        play();
-    }
+
+//    public BlackjackGame(Player player) {
+//        this.player = player;
+//        this.deck = new CardDeck();
+//        this.input = new Scanner(System.in);
+//        play();
+//    }
     
     public BlackjackGame() {
-    	//call bjinterf to display and ask for user
-    	//assign to obj
-    	//call play
     	
     }
     
     public void initializeGame(Player player) {
-    	this.player = player;
+    	this.playerName = player.getName();
+    	this.playerBalance = player.getBalance();
         this.deck = new CardDeck();
         this.input = new Scanner(System.in);
     }
 
     public void play() {
-        System.out.println();
-        System.out.println("Welcome to Blackjack, " + player.getName() + "!");
+    	//place bet HERE
+        gameDisplay.blackJackStart(this.playerName);
         boolean keepPlaying = true;
 
         while (keepPlaying) {
-            if (player.getBalance() < 2) {
+            if (this.playerBalance < 2) {
                 System.out.println("You don’t have enough money to play.");
                 break;
             }
@@ -75,9 +80,9 @@ public class BlackjackGame {
         playerHand.add(drawCard());
         dealerHand.add(drawCard());
 
-        System.out.println();
-        System.out.println("Your cards: " + playerHand);
-        System.out.println("Dealer shows: " + dealerHand.get(0));
+        String currPlayerCard = playerHand.get(0).getRank() + " of " +playerHand.get(0).getSuit();
+        String currDealerCard = dealerHand.get(0).getRank() + " of " +dealerHand.get(0).getSuit();
+        gameDisplay.showHands(currPlayerCard , currDealerCard);
 
         int playerScore = getHandValue(playerHand);
         int dealerScore = getHandValue(dealerHand);
@@ -88,12 +93,13 @@ public class BlackjackGame {
             return;
         } else if (playerScore == 21) {
             System.out.println("Blackjack! You win 1.5x your bet.");
-            player.setBalance(bet * 1.5);
-            player.setNumberOfWins(1);
+            this.playerBalance += bet*1.5;
+            this.playerWins += 1;
+            
             return;
         } else if (dealerScore == 21) {
             System.out.println("Dealer has Blackjack. You lose.");
-            player.setBalance(-bet);
+            this.playerBalance -= bet;
             return;
         }
 
@@ -110,7 +116,7 @@ public class BlackjackGame {
                 playerScore = getHandValue(playerHand);
                 if (playerScore > 21) {
                     System.out.println("You busted. Dealer wins.");
-                    player.setBalance(-bet);
+                    this.playerBalance -= bet;
                     return;
                 }
             } else if (choice == 'S') {
@@ -132,8 +138,8 @@ public class BlackjackGame {
 
         if (dealerScore > 21) {
             System.out.println("Dealer busts! You win.");
-            player.setBalance(bet);
-            player.setNumberOfWins(1);
+            this.playerBalance += bet;
+            this.playerWins += 1;
         } else {
             System.out.println();
             System.out.println("Final hands:");
@@ -142,11 +148,11 @@ public class BlackjackGame {
 
             if (playerScore > dealerScore) {
                 System.out.println("You win!");
-                player.setBalance(bet);
-                player.setNumberOfWins(1);
+                this.playerBalance += bet;
+                this.playerWins += 1;
             } else if (playerScore < dealerScore) {
                 System.out.println("Dealer wins.");
-                player.setBalance(-bet);
+                this.playerBalance -= bet;
             } else {
                 System.out.println("It’s a tie.");
             }
@@ -159,10 +165,10 @@ public class BlackjackGame {
 
         while (!valid) {
             System.out.println();
-            System.out.print("Place your bet (min $2, max $" + player.getBalance() + "): ");
+            System.out.print("Place your bet (min $2, max $" + playerBalance + "): ");
             if (input.hasNextDouble()) {
                 bet = input.nextDouble();
-                if (bet >= 2 && bet <= player.getBalance()) {
+                if (bet >= 2 && bet <= playerBalance) {
                     valid = true;
                 } else {
                     System.out.println("Invalid bet amount.");
