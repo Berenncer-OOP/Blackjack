@@ -6,6 +6,16 @@ import mru.game.model.Player;
 
 public class PlayerReports extends InterfaceComponents{
 	
+	public boolean returnToMainMenu() {
+		System.out.println("Press \"Enter\" to continue...");
+		String input = kInput.nextLine();
+		if (input == "" ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	//playerSearch
 	public void playerSearchDisplay(Player p) {
 		int nameFieldLength = 18; //length of report fields
@@ -21,7 +31,7 @@ public class PlayerReports extends InterfaceComponents{
 			//calculating spaces to add in order to print display correctly
 			String nameSpacing = addSpacing(nameFieldLength, playerName.length());
 			String winsSpacing = addSpacing(winsFieldLength, playerWins.length());
-			String balanceSpacing = addSpacing(balanceFieldLength, playerName.length());
+			String balanceSpacing = addSpacing(balanceFieldLength, playerBalance.length());
 			
 			
 			//would like to put the row printouts in their own methods but not a priority:
@@ -46,6 +56,9 @@ public class PlayerReports extends InterfaceComponents{
 		int nameFieldLength = 18; //length of report fields
 		int winsFieldLength = 22; //length of report fields
 		
+		if (topPlayers.get(0) == null) {
+			System.out.println("There are no player records to report. Try again later!");
+		} else {
 		//
 		String topName =  topPlayers.get(0).getName();
 		int topWins = topPlayers.get(0).getNumberOfWins();
@@ -53,11 +66,14 @@ public class PlayerReports extends InterfaceComponents{
 		String.format(topName);
 		//end of messing
 		
+		
+		
 		System.out.println();
-		System.out.println("|"+ topPlayers.get(2).getName()+" " +"|"+topPlayers.get(3).getNumberOfWins()+" " + "+" );
-		System.out.println("|"+ topPlayers.get(4).getName()+" " +"|"+topPlayers.get(5).getNumberOfWins()+" " + "+" );
+//		System.out.println("|"+ topPlayers.get(0).getName()+" " +"|"+topPlayers.get(0).getNumberOfWins()+" " + "+" );
+//		System.out.println("|"+ topPlayers.get(1).getName()+" " +"|"+topPlayers.get(1).getNumberOfWins()+" " + "+" );
 		System.out.println();
-		System.out.println("Press "+"Enter"+" to continue");
+		
+		}
 		
 		
 	}
