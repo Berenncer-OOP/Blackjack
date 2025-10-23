@@ -3,6 +3,9 @@ import java.io.IOException;
 
 import mru.game.controller.GameManager;
 
+/**
+ * Initiates GameManager using GameManager() which starts app file handling and menu controller
+ */
 public class AppDriver {
 
 	public static void main(String[] args) throws IOException {

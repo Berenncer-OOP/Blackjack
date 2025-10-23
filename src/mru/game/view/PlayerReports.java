@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import mru.game.model.Player;
 
+/**
+ * View class to display results of player reports operations from GameManager when selected through AppMenu.
+ */
 public class PlayerReports extends InterfaceComponents{
 	
 	/**

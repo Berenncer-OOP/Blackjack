@@ -3,8 +3,8 @@ package mru.game.view;
 import java.util.*;
 
 /**
- * This class shows the menus and sub menus to the user
- * It also prompts the user for the inputs and validates them 
+ * This class shows the menus and sub menus to the user.
+ * It also prompts the user for the inputs and validates them.
  */
 public class AppMenu {
 	Scanner kInput = new Scanner(System.in);
@@ -110,10 +110,16 @@ public class AppMenu {
 		return validatedOption;
 	}
 	
+	/**
+	 * Prints "Saving..." message to console.
+	 */
 	public void fileSaving() {
 		System.out.println("Saving...");
 	}
 	
+	/**
+	 * Prints message telling user file has saved.
+	 */
 	public void fileSaved() {
 		System.out.println("Done! Please visit us again!");
 	}

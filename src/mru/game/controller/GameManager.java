@@ -10,18 +10,10 @@ import java.util.Scanner;
 import mru.game.model.Player;
 import mru.game.view.*;
 
+/**
+ * Controller for file handling, performing operations based on user input in menu views, launching BlackjackGame
+ */
 public class GameManager {
-	
-	/* In this class toy'll need these methods:
-	 * A constructor
-	 * A method to load the txt file into an arraylist (if it exists, so you check if the txt file exists first)
-	 * A save method to store the arraylist into the the txt file 
-	 * A method to search for a player based their name
-	 * A method to find the top players
-	 * Depending on your designing technique you may need and you can add more methods here 
-	 */
-	//related to: issue #13, design
-	
 	private ArrayList<Player> playerRecords = new ArrayList<Player>();
 	private final double STARTING_BALANCE = 100.00;
 	private final int STARTING_WINS = 0;
@@ -29,7 +21,6 @@ public class GameManager {
 	private final String FILE_PATH = "res/CasinoInfo.txt";
 	private File casinoInfo;
 	
-	//maybe move these objects?
 	private AppMenu appMenu = new AppMenu();
 	private PlayerReports playerReports = new PlayerReports();
 	
@@ -180,11 +171,6 @@ public class GameManager {
 
 	
 //playerRecords management	
-
-	// find player by name in players AL; return index location of player in AL
-	// use for player set up at game start
-	// also use for search submenu
-	// if return value == -1, player was not found
 	/**
 	 * Searches playerRecords for a specified player by name
 	 * @param name a String specifying the target player's name
@@ -251,7 +237,8 @@ public class GameManager {
 	}
 	
 	/**
-	 * Iterates over an ArrayList of Player objects to sort them into a new list ranked by wins.
+	 * Iterates over an ArrayList of Player objects to sort them into a new list ranked by wins. 
+	 * Sets up topPlayers ArrayList with five default Player("",0,-1) objects to provide objects to iterate over; these starter objects will end up at the end of topPlayers. ArrayList<>.removeLast() was not functioning; can either remove these default objects in another manner or just not display them in Top Players report.
 	 * @param playerRecords the ArrayList of all playerRecords stored in GameManager; could be a subset ArrayList of Player objects if desired
 	 * @return ArrayList of Player objects sorted by number of wins
 	 */
@@ -259,17 +246,17 @@ public class GameManager {
 		ArrayList<Player> topPlayers = new ArrayList<Player>();
 		int listLength = 5;
 		
+		//add default player objects to topPlayers to give next for loop something to iterate over and compare against
 		for (int i = 0; i < listLength; i++) {
 			Player topPlayer = new Player("",0,-1);
-			
 			topPlayers.add(topPlayer);
 		}
 		
-		//for each player in playerRecords
-			//check each spot in topPlayers
-			//if player's wins greater than person in spot, insert player in that spot
+		//for each player in playerRecords:	
 		for (Player player : playerRecords) {
+			//check each spot in topPlayers:
 			for (int i = 0; i < topPlayers.size(); i++) {
+				//if player's wins greater than person in spot, insert player in that spot
 				int topWins = topPlayers.get(i).getNumberOfWins();
 				if (player.getNumberOfWins() > topWins){
 					topPlayers.add(i, player);
