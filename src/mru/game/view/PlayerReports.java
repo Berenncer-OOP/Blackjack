@@ -6,6 +6,10 @@ import mru.game.model.Player;
 
 public class PlayerReports extends InterfaceComponents{
 	
+	/**
+	 * Checks for and validates user input for option to return to main menu after viewing a report.
+	 * @return true If User Presses Enter, false if user presses another character
+	 */
 	public boolean returnToMainMenu() {
 		System.out.println("Press \"Enter\" to continue...");
 		String input = kInput.nextLine();
@@ -16,8 +20,11 @@ public class PlayerReports extends InterfaceComponents{
 		}
 	}
 	
-	//playerSearch
-	public void playerSearchDisplay(Player p) {
+	/**
+	 * Displays a table with a specific player's statistics. Displays a message if the player cannot be found. 
+	 * @param p a player object
+	 */
+	public void playerSearchReport(Player p) {
 		int nameFieldLength = 18; //length of report fields
 		int winsFieldLength = 15; 
 		int balanceFieldLength = 22; 
@@ -33,17 +40,28 @@ public class PlayerReports extends InterfaceComponents{
 			String winsSpacing = addSpacing(winsFieldLength, playerWins.length());
 			String balanceSpacing = addSpacing(balanceFieldLength, playerBalance.length());
 			
-			
 			//would like to put the row printouts in their own methods but not a priority:
 			System.out.println("                 - PLAYER INFO - ");
-			System.out.println(intersection + rowSection(headerRow, nameFieldLength) + intersection + rowSection(headerRow, winsFieldLength) + intersection + rowSection(headerRow, balanceFieldLength)+ intersection); //pieces together header row separators
+			
+			// header row separator:
+			System.out.println(intersection + rowSection(headerRow, nameFieldLength) 
+			+ intersection + rowSection(headerRow, winsFieldLength) 
+			+ intersection + rowSection(headerRow, balanceFieldLength)+ intersection); 
+			
+			// column Headings:
 			System.out.println(column + "NAME" + addSpacing(nameFieldLength, 4) + column + "# WINS" + addSpacing(winsFieldLength, 6)  + column + "BALANCE" + addSpacing(balanceFieldLength, 7)+ column);
+			// header row separator:
+			System.out.println(intersection + rowSection(headerRow, nameFieldLength) 
+			+ intersection + rowSection(headerRow, winsFieldLength) 
+			+ intersection + rowSection(headerRow, balanceFieldLength)+ intersection); 
 			
-			System.out.println(intersection + rowSection(headerRow, nameFieldLength) + intersection + rowSection(headerRow, winsFieldLength) + intersection + rowSection(headerRow, balanceFieldLength)+ intersection); //pieces together header row separators
-			
+			//Player Information row:
 			System.out.println(column + playerName + nameSpacing + column + playerWins + winsSpacing + column + playerBalance + balanceSpacing + column);
 			
-			System.out.println(intersection + rowSection(row, nameFieldLength) + intersection + rowSection(row, winsFieldLength) + intersection + rowSection(row, balanceFieldLength)+ intersection); //pieces together header row separators
+			// footer Rows Separator:
+			System.out.println(intersection + rowSection(row, nameFieldLength) 
+			+ intersection + rowSection(row, winsFieldLength) 
+			+ intersection + rowSection(row, balanceFieldLength)+ intersection); 
 			
 		 }
 		
@@ -53,14 +71,18 @@ public class PlayerReports extends InterfaceComponents{
 		
 	}
 	
-	public void topPlayersSearchDisplay(Player[] topPlayers) {
+	/**
+	 * Displays a table of top players' names and number of wins.
+	 * @param topPlayers performs display operations on an ArrayList of Player objects; use GameManager.findTopPlayers(playerRecords) to create an ArrayList sorted by player wins
+	 */
+	public void topPlayersReport(ArrayList<Player> topPlayers) {
 		int nameFieldLength = 18; //length of report fields
 		int winsFieldLength = 22; //length of report fields
 
-		if (topPlayers[0] == null) {
+		if (topPlayers.get(0) == null) {
 			System.out.println("There are no player records to report. Try again later!");
 		} else {
-			System.out.println("                 - TOP PLAYERS - ");
+			System.out.println("            - TOP PLAYERS - ");
 			//upper header row
 			System.out.println(intersection + rowSection(headerRow, nameFieldLength) 
 			+ intersection + rowSection(headerRow, winsFieldLength) + intersection); 
@@ -74,17 +96,15 @@ public class PlayerReports extends InterfaceComponents{
 			for (Player topPlayer : topPlayers) {
 				String playerName = topPlayer.getName();
 				String playerWins = String.valueOf(topPlayer.getNumberOfWins());
-				
-				System.out.println(column + playerName + addSpacing(nameFieldLength, playerName.length()) + column + playerWins + addSpacing(winsFieldLength, playerWins.length()) + column);
-				System.out.println(intersection + rowSection(row, nameFieldLength) 
-				+ intersection + rowSection(row, winsFieldLength) + intersection);
+				//GameManager.findTopPlayers() uses players with blank names to initialize the topPlayers AL;
+				//So this if statement prints only the rankings that have valid players
+				if (playerName != "") {
+					System.out.println(column + playerName + addSpacing(nameFieldLength, playerName.length()) 
+					+ column + playerWins + addSpacing(winsFieldLength, playerWins.length()) + column);
+					System.out.println(intersection + rowSection(row, nameFieldLength) 
+					+ intersection + rowSection(row, winsFieldLength) + intersection);
+				}
 			}
-
-		
 		}
-		
-		
 	}
-	
-
 }

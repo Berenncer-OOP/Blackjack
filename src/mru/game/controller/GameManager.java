@@ -99,9 +99,9 @@ public class GameManager {
 		switch (option) {
 		
 		case 'T': {
-			Player[] topPlayers = findTopPlayers(this.playerRecords);
+			ArrayList<Player> topPlayers = findTopPlayers(this.playerRecords);
 			System.out.println(playerRecords.get(0).getName());
-			playerReports.topPlayersSearchDisplay(topPlayers);
+			playerReports.topPlayersReport(topPlayers);
 			boolean returnToMain = false;
 			do {
 				returnToMain = playerReports.returnToMainMenu();
@@ -113,7 +113,7 @@ public class GameManager {
 		}
 		case 'N':{
 			Player player = findPlayer(playerReports.promptName());
-			playerReports.playerSearchDisplay(player);
+			playerReports.playerSearchReport(player);
 			boolean returnToMain = false;
 			do {
 				returnToMain = playerReports.returnToMainMenu();
@@ -216,41 +216,24 @@ public class GameManager {
 	
 
 	
-	public Player[] findTopPlayers(ArrayList<Player> playerRecords) {
-		//ArrayList<Player> topPlayers = new ArrayList<Player>();
-		
+	public ArrayList<Player> findTopPlayers(ArrayList<Player> playerRecords) {
+		ArrayList<Player> topPlayers = new ArrayList<Player>();
 		int listLength = 5;
-
+		
+		for (int i = 0; i < listLength; i++) {
+			Player topPlayer = new Player("",0,-1);
+			
+			topPlayers.add(topPlayer);
+		}
 		
 		//for each player in playerRecords
 			//check each spot in topPlayers
 			//if player's wins greater than person in spot, insert player in that spot
-//		for (Player player : playerRecords) {
-//			for (int i = 0; i < topPlayers.size(); i++) {
-//				int topWins = topPlayers.get(i).getNumberOfWins();
-//				if (player.getNumberOfWins() > topWins){
-//					topPlayers.add(i, player);
-//					topPlayers.remove(listLength);
-//					System.out.println(player.getName());
-//					break;
-//				}
-//			}
-//		}
-		
-		
-		Player[] topPlayers = new Player[listLength];
-		
-		for (int i = 0; i < listLength; i++) {
-			Player player = playerRecords.get(i);
-			
-			topPlayers[i] = player;
-		}
-		
 		for (Player player : playerRecords) {
-			for (int i = 0; i < listLength; i++) {
-				int topWins = topPlayers[i].getNumberOfWins();
+			for (int i = 0; i < topPlayers.size(); i++) {
+				int topWins = topPlayers.get(i).getNumberOfWins();
 				if (player.getNumberOfWins() > topWins){
-					topPlayers[i] = player;
+					topPlayers.add(i, player);
 					System.out.println(player.getName());
 					break;
 				}
