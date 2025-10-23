@@ -1,215 +1,386 @@
 package mru.game.controller;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 import mru.game.model.Player;
 import mru.game.view.BlackjackInterface;
-
 /**
  * Runs the actual Blackjack game.
- * Handles all the game logic and money updates.
+ * Handles all the game logic. Handles current player money/wins updates during game play using a local Player object; field data is retrieved after game play to update Player in playerRecords in GameManager.
  */
 public class BlackjackGame {
-	/**
-	 * In this class you implement the game
-	 * You should use CardDeck class here
-	 * See the instructions for the game rules
-	 */
-	//related to issue #14, design
+	ArrayList<Card> playerHand = new ArrayList<>();
+    ArrayList<Card> dealerHand = new ArrayList<>();
 	
-    private Player currentPlayer;
-    private String playerName;
-    private double playerBalance;
-    private int playerWins;
-    private boolean returningPlayer;
+   @SuppressWarnings("unused")
+   private Player currentPlayer;
+   private String playerName;
+   private double playerBalance;
+   private int playerWins;
+   private boolean returningPlayer;
+   
+   private int playerAces;
+   private int dealerAces;
+   private boolean hitting = false;  
+  
+   private CardDeck deck;
+   private Scanner input;
+   private BlackjackInterface gameDisplay = new BlackjackInterface();
+  
+   /**
+	 * Default constructor, calls no methods.
+	 */
+   public BlackjackGame() {
+   	
+   }
+   
+   /**
+    * Initializes game with current player Player object fields, returningPlayer flag, CardDeck, and input scanner.
+    * @param player Player object
+    * @param returningPlayer boolean, true if returning player, false if new player
+    */
+   public void initializeGame(Player player, boolean returningPlayer) {
+   	this.currentPlayer = player;
+   	this.playerName = player.getName();
+   	this.playerBalance = player.getBalance();
+   	this.returningPlayer = returningPlayer;
+   	
+    this.deck = new CardDeck();
+    this.input = new Scanner(System.in);
+   }
+   /**
+    * Gets balance of current player local Player object in BlackjackGame
+    * @return this.playerBalance double
+    */
+   public double getPlayerBalance() {
+   	return this.playerBalance;
+   }
+   /**
+    * Gets wins from current instance of game play for current player local Player object in BlackjackGame
+    * @return playerWins int representing wins accrued during current session
+    */
+   public int getPlayerWins() {
+   	return this.playerWins;
+   }
+
+   /**
+    * Handles the game play loop, loops playing blackjack until player decides they are done
+    */
+   public void play() {
+	   /**
+	    * A welcome display for the player
+	    */
+       gameDisplay.welcomePlayer(this.playerName, this.playerBalance, this.returningPlayer);
+       boolean keepPlaying = true;
+       
+       while (keepPlaying) {
+           if (this.playerBalance < 2) {
+               System.out.println("You don’t have enough money to play.");
+               break;
+           }
+           double bet = getValidBet();
+           playRound(bet);
+           gameDisplay.playAgain();
+           char again = input.next().toUpperCase().charAt(0);
+           keepPlaying = (again == 'Y');
+       }
+       System.out.println();
+       System.out.println("Leaving the Blackjack table...");
+   }
+   
+  /**
+   * checks to see if player got blackjack
+   * @param playerScore
+   * @param dealerScore
+   * @return
+   */
+   private boolean playerGotBlackjack(int playerScore, int dealerScore) {
+ 	  if (playerScore == 21 && dealerScore == 21) {
+           System.out.println("Both got Blackjack. It’s a tie.");
+           showDisplay(playerHand, dealerHand);
+           return false;
+           
+       } else if (playerScore == 21) {
+    	   showDisplay(playerHand, dealerHand);
+           System.out.println("Blackjack! You win 1.5x your bet.");
+           return true;
+          
+           
+       } else if (dealerScore == 21) {
+    	   showDisplay(playerHand, dealerHand);
+           System.out.println("Dealer has Blackjack. You lose.");
+           return false;
+           
+       }
+ 	  return false;
+   }
+/**
+ * A round of blackjack, either until dealer/player gets 21, a bust or a tie happens
+ * @param bet
+ */
+   private void playRound(double bet) {
+	   dealerAces = 0;
+	   playerAces = 0;
+	   clearHand(playerHand);
+	   clearHand(dealerHand);
+       // deal cards
+       playerHand.add(drawCard());
+       dealerHand.add(drawCard());
+       playerHand.add(drawCard());
+       dealerHand.add(drawCard());
+
+       // check for instant Blackjacks
+      if( getHandValuePlayer() == 21) {
+    	  System.out.println("You won! $" + bet*1.5);
+    	  this.playerBalance += bet * 1.5;
+    	  this.playerWins++;
+    	  return;
+      }
+
+       // player turn
+       boolean turn = true;
+       while (turn) {
+           System.out.println();
+           if(playerHand.size() == 2) {
+        	   gameDisplay.blackJackStart(playerName);
+        	   gameDisplay.showHands(playerHand.get(0).toString(), dealerHand.get(0).toString());
+        	   gameDisplay.showHands(playerHand.get(1).toString(), "");
+           }   
+           System.out.print("Hit (H) or Stand (S)? ");
+           char choice = input.next().toUpperCase().charAt(0);
+           
+           if (choice == 'H') {
+        	   hitting = true;
+               playerHand.add(drawCard());
+               showDisplay(playerHand, dealerHand);
+               if( playerGotBlackjack(getHandValuePlayer(), getHandValueDealer())) {
+             	  this.playerBalance += bet * 1.5;
+             	  this.playerWins++;
+             	  return;
+               }
     
-    private CardDeck deck;
-    private Scanner input;
-	private BlackjackInterface gameDisplay = new BlackjackInterface();
-    
-    public BlackjackGame() {
-    	
-    }
-    
-    public void initializeGame(Player player, boolean returningPlayer) {
-    	this.currentPlayer = player;
-    	this.playerName = player.getName();
-    	this.playerBalance = player.getBalance();
-    	this.returningPlayer = returningPlayer;
-        this.deck = new CardDeck();
-        this.input = new Scanner(System.in);
-    }
-    
-    public double getPlayerBalance() {
-    	return this.playerBalance;
-    }
-    
-    public int getPlayerWins() {
-    	return this.playerWins;
-    }
+               if (getHandValuePlayer() > 21) {
+            	   
+            	   showDisplay(playerHand, dealerHand);
+            	   hitting = false;
+                   System.out.println("You busted. Dealer wins.");
+                   this.playerBalance -= bet;
+                   return;
+               }
+               
+           } else if (choice == 'S') {
+        	   hitting = false;
+               turn = false;
 
-    public void play() {
-        gameDisplay.welcomePlayer(this.playerName, this.playerBalance, this.returningPlayer);
-        boolean keepPlaying = true;
+           } else {
+               System.out.println("Invalid input.");
+           }
+       }
+       
+       // dealer’s turn
+       System.out.println();
+       System.out.println("Dealer’s turn...");
 
-         do {
-            if (this.playerBalance < 2) {
-                System.out.println("You don’t have enough money to play.");
-                break;
-            }
+       while (getHandValueDealer() < 17) {
+           dealerHand.add(drawCard());
+           if(getHandValueDealer() == 17) {
+        	   showDisplay(playerHand, dealerHand);
+        	   System.out.println("Dealer stands");
+        	   break;
+           }
+           if (getHandValueDealer() > 21) {
+        	   showDisplay(playerHand, dealerHand);
+        	   
+               System.out.println("Dealer busts! ");
+               
+               break;
+           }
+           if (getHandValueDealer() == 21) {
+        	   showDisplay(playerHand, dealerHand);
+        	   
+               System.out.println("Dealer got BlackJack! ");
+               this.playerBalance -= bet;
+               break;
+           }
+          
+       }
+           System.out.println();
 
-            double bet = getValidBet();
-            gameDisplay.blackJackStart(this.playerName);
-            playRound(bet);
+           if (getHandValuePlayer() > getHandValueDealer() ) {
+        	   showDisplay(playerHand, dealerHand);
+               System.out.println("You win! $"+ bet);
+               this.playerBalance += bet;
+               this.playerWins += 1;
+           } else if (getHandValuePlayer() < getHandValueDealer() || getHandValueDealer() == 21) {
+        	   showDisplay(playerHand, dealerHand);
+               System.out.println("Dealer wins. -$"+ bet);
+               this.playerBalance -= bet;
+           } else if(getHandValuePlayer() == getHandValueDealer()) {
+        	   showDisplay(playerHand, dealerHand); 
+               System.out.println("It’s a tie.");
+           }
+       }
+   /**
+    * Will notify if bet isnt valid and return if it is valid
+    * @return bet amount
+    */
+   private double getValidBet() {
+       double bet = 0;
+       boolean valid = false;
+       while (!valid) {
+           System.out.println();
+           System.out.print("Place your bet (min $2, max $" + playerBalance + "): ");
+           if (input.hasNextDouble()) {
+               bet = input.nextDouble();
+               if (bet >= 2 && bet <= playerBalance) {
+                   valid = true;
+               } else {
+                   System.out.println("Invalid bet amount.");
+               }
+           } else {
+               System.out.println("Enter a number, please.");
+               input.next();
+           }
+       }
+       return bet;
+   }
+   /**
+    * draws a card from the cardDeck class
+    * @return Card object
+    */
+   private Card drawCard() {
+       if (deck.getDeck().isEmpty()) {
+           System.out.println();
+           System.out.println("Deck’s empty, reshuffling...");
+           deck = new CardDeck();
+       }
+       return deck.getDeck().remove(0);
+   }
+   /**
+    * clears the "hand" of whichever card arraylist specified in param
+    * @param hand
+    */
+   private void clearHand(ArrayList<Card> hand) {
+	   while(hand.size()!= 0) {
+		   hand.remove(0);
+	   }
+   }
 
-            System.out.println();
-            System.out.print("Play another round? (Y/N): ");
-            char again = input.next().toUpperCase().charAt(0);
-            keepPlaying = (again == 'Y');
-        } while (keepPlaying);
+   
+   /**
+    * calculates total hand value for player
+    * @return total hand value for player
+    */
+   private int getHandValuePlayer() {
+	   int total = 0;
+	   
+	   	for(Card c: playerHand) {
+	   		if(c.getRank() > 10) {
+	   			if( c.toString().contains("King") || c.toString().contains("Queen") ||  c.toString().contains("Jack")) {
+	   				total +=10;
+	   				
+		   		}
+	   			if(c.getRank() == 1) {
+	   				playerAces++;
+	   				total +=11;
+	   			}
+	   		}else {
+	   		
+	   			total += c.getRank();
+	   		}
+	   		if(total == 21 && playerAces == 1) {
+		   		return total;
+		   	}
+	   		else {
+			   	while (total > 21 && playerAces > 0) {
+			   		total -= 10;
+			   		playerAces--;
+			   	}
+	   		}
+	   	}
+	   	
+	   	return total;
+   }
+   
+   /**
+    * calculates dealers current hand value 
+    * @return total hand value for dealer
+    */
+   private int getHandValueDealer() {
+	   int total = 0;
+	   
+	   	for(Card c: dealerHand) {
+	   		if(c.getRank() > 10) {
+	   			if( c.toString().contains("King") || c.toString().contains("Queen") ||  c.toString().contains("Jack")) {
+	   				total +=10;
+	   				
+		   		}
+	   			if(c.getRank() == 1) {
+	   				dealerAces++;
+	   				total +=11;
+	   			}
+	   		}else {
+	   		
+	   			total += c.getRank();
+	   		}
+	   		if(total == 21 && dealerAces == 1) {
+		   		return total;
+		   	}
+	   		else {
+			   	while (total > 21 && dealerAces > 0) {
+			   		total -= 10;
+			   		dealerAces--;
+			   	}
+	   		}
+	   	}
+	   	
+	   	return total;
+   }
+   
+   /**
+    * takes in the current hands notices if player card or dealer cards should be shown and passes string values to blackjackinterface class to display on console with correct values
+    * @param playerHand
+    * @param dealerHand
+    */
+   public void showDisplay(ArrayList<Card> playerHand, ArrayList<Card> dealerHand) {
+	   gameDisplay.blackJackStart(playerName);
+	   
+	   if(hitting) {
+		   for(Card p: playerHand) {
+			   if(playerHand.indexOf(p)== 0) {
+				   gameDisplay.showHands(p.toString(), dealerHand.get(0).toString());
+			   }
+			   else {
+				   gameDisplay.showHands(p.toString(), "");
+			   }
+		   }
+	   }
+	   else {
+		   if(playerHand.size() < dealerHand.size()) {
+			   for(Card d : dealerHand) {
+				   if(dealerHand.indexOf(d) < playerHand.size()) { 
+					   gameDisplay.showHands(playerHand.get(dealerHand.indexOf(d)).toString(), d.toString());
+				   }
+				   else {
+					   gameDisplay.showHands("", d.toString());
+				   }
+			   }
+			   
+		   }else  if(playerHand.size() > dealerHand.size()) {
+			   for(Card p : playerHand) {
+				   if(playerHand.indexOf(p) < dealerHand.size()) { 
+					   gameDisplay.showHands(p.toString(), dealerHand.get(playerHand.indexOf(p)).toString());
+				   }
+				   else {
+					   gameDisplay.showHands(p.toString(),"");
+				   }
+			   }
+		   }else {
+			   for(Card p : playerHand) {
+				   
+					   gameDisplay.showHands(p.toString(), dealerHand.get(playerHand.indexOf(p)).toString());
+			   }
+		   }
+	   }   
+   }
+  }
 
-        System.out.println();
-        System.out.println("Leaving the Blackjack table...");
-    }
-
-    private void playRound(double bet) {
-        ArrayList<Card> playerHand = new ArrayList<>();
-        ArrayList<Card> dealerHand = new ArrayList<>();
-
-        // deal cards
-        playerHand.add(drawCard());
-        dealerHand.add(drawCard());
-        playerHand.add(drawCard());
-        dealerHand.add(drawCard());
-
-        String currPlayerCard = playerHand.get(0).getRank() + " of " +playerHand.get(0).getSuit();
-        String currDealerCard = dealerHand.get(0).getRank() + " of " +dealerHand.get(0).getSuit();
-        gameDisplay.showHands(currPlayerCard , currDealerCard);
-
-        int playerScore = getHandValue(playerHand);
-        int dealerScore = getHandValue(dealerHand);
-
-        // check for instant Blackjacks
-        if (playerScore == 21 && dealerScore == 21) {
-            System.out.println("Both got Blackjack. It’s a tie.");
-            return;
-        } else if (playerScore == 21) {
-            System.out.println("Blackjack! You win 1.5x your bet.");
-            this.playerBalance += bet*1.5;
-            this.playerWins += 1;
-            
-            return;
-        } else if (dealerScore == 21) {
-            System.out.println("Dealer has Blackjack. You lose.");
-            this.playerBalance -= bet;
-            return;
-        }
-
-        // player turn
-        boolean turn = true;
-        while (turn) {
-            System.out.println();
-            System.out.println("Your hand: " + playerHand + " (Total: " + getHandValue(playerHand) + ")");
-            System.out.print("Hit (H) or Stand (S)? ");
-            char choice = input.next().toUpperCase().charAt(0);
-
-            if (choice == 'H') {
-                playerHand.add(drawCard());
-                playerScore = getHandValue(playerHand);
-                if (playerScore > 21) {
-                    System.out.println("You busted. Dealer wins.");
-                    this.playerBalance -= bet;
-                    return;
-                }
-            } else if (choice == 'S') {
-                turn = false;
-            } else {
-                System.out.println("Invalid input.");
-            }
-        }
-
-        // dealer’s turn
-        System.out.println();
-        System.out.println("Dealer’s turn...");
-        System.out.println("Dealer’s hand: " + dealerHand + " (Total: " + dealerScore + ")");
-        while (dealerScore < 17) {
-            dealerHand.add(drawCard());
-            dealerScore = getHandValue(dealerHand);
-            System.out.println("Dealer draws. Total: " + dealerScore);
-        }
-
-        if (dealerScore > 21) {
-            System.out.println("Dealer busts! You win.");
-            this.playerBalance += bet;
-            this.playerWins += 1;
-        } else {
-            System.out.println();
-            System.out.println("Final hands:");
-            System.out.println("You: " + playerHand + " (" + playerScore + ")");
-            System.out.println("Dealer: " + dealerHand + " (" + dealerScore + ")");
-
-            if (playerScore > dealerScore) {
-                System.out.println("You win!");
-                this.playerBalance += bet;
-                this.playerWins += 1;
-            } else if (playerScore < dealerScore) {
-                System.out.println("Dealer wins.");
-                this.playerBalance -= bet;
-            } else {
-                System.out.println("It’s a tie.");
-            }
-        }
-    }
-
-    private double getValidBet() {
-        double bet = 0;
-        boolean valid = false;
-
-        while (!valid) {
-            System.out.println();
-            System.out.print("Place your bet (min $2, max $" + playerBalance + "): ");
-            if (input.hasNextDouble()) {
-                bet = input.nextDouble();
-                if (bet >= 2 && bet <= playerBalance) {
-                    valid = true;
-                } else {
-                    System.out.println("Invalid bet amount.");
-                }
-            } else {
-                System.out.println("Enter a number, please.");
-                input.next();
-            }
-        }
-        return bet;
-    }
-
-    private Card drawCard() {
-        if (deck.getDeck().isEmpty()) {
-            System.out.println();
-            System.out.println("Deck’s empty, reshuffling...");
-            deck = new CardDeck();
-        }
-        return deck.getDeck().remove(0);
-    }
-
-    public int getHandValue(ArrayList<Card> hand) {
-        int total = 0;
-        int aces = 0;
-
-        for (Card c : hand) {
-            int rank = c.getRank();
-            if (rank > 10) total += 10;
-            else if (rank == 1) {
-                total += 11;
-                aces++;
-            } else total += rank;
-        }
-
-        while (total > 21 && aces > 0) {
-            total -= 10;
-            aces--;
-        }
-
-        return total;
-    }
-}
