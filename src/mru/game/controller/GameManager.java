@@ -34,15 +34,20 @@ public class GameManager {
 	private PlayerReports playerReports = new PlayerReports();
 	
 
-	
+	/**
+	 * Constructor for class calls file set up and main menu controller methods
+	 * @throws IOException
+	 */
 	public GameManager() throws IOException {
-		//commenting out for now because not working and need to troubleshoot with Spencer:
 		fileSetup();
 		mainMenuController();
 	}
 		
 		
-	//On startup check if file exists: 
+	/**
+	 * Checks if casinoInfo file exists; loads existing file if yes, creates new file if not.
+	 * @throws IOException
+	 */
 	public void fileSetup() throws IOException {
 		casinoInfo = new File(FILE_PATH);
 		if (casinoInfo.exists()) {
@@ -52,7 +57,11 @@ public class GameManager {
 		}
 	}
 	
-	//load from file to playerRecords
+	/**
+	 * Loads lines of file to array list of player records.
+	 * @param inputFile .txt file with one record per line in the form "Name,balance,wins".
+	 * @throws IOException
+	 */
 	public void loadFileData(File inputFile) throws IOException {
 		//load 
 		String currentLine;
@@ -69,7 +78,7 @@ public class GameManager {
 	}
 	
 	/**
-	 * Controls program flow using validated output of appMenu.mainMenu() user input. 
+	 * Controls program flow from main Menu using validated output of appMenu.mainMenu() user input. 
 	 * @throws IOException
 	 */
 	public void mainMenuController() throws IOException {
@@ -82,7 +91,7 @@ public class GameManager {
 			playGame();
 			break;
 		case 'S':
-			search();
+			searchMenuController();
 			break;
 		case 'E':
 			saveAndExit();
@@ -90,14 +99,17 @@ public class GameManager {
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + option);
 		}
-		
 	}
-	
-	private void search() throws IOException {
+
+//Main Menu Options:
+	/**
+	 * Controls program flow from search Menu using validated output of appMenu.searchMenu() user input. 
+	 * @throws IOException
+	 */
+	private void searchMenuController() throws IOException {
 		char option = appMenu.searchMenu();
 		
 		switch (option) {
-		
 		case 'T': {
 			ArrayList<Player> topPlayers = findTopPlayers(this.playerRecords);
 			System.out.println(playerRecords.get(0).getName());
@@ -132,6 +144,10 @@ public class GameManager {
 		}
 	}
 	
+	/**
+	 * Instantiates BlackjackGame and related view and Player objects, passes Player data between BlackjackGame and GameManager at game start and end.
+	 * @throws IOException
+	 */
 	public void playGame() throws IOException {
 		BlackjackGame game = new BlackjackGame();
 		BlackjackInterface gameDisplay = new BlackjackInterface();
@@ -147,6 +163,10 @@ public class GameManager {
 		mainMenuController();
 	}
 	
+	/**
+	 * Saves playerRecords back to casinoInfo file and calls AppMenu methods to display visual saving/saved cues to user.
+	 * @throws IOException
+	 */
 	private void saveAndExit() throws IOException {
 		appMenu.fileSaving();
 		PrintWriter saveFile = new PrintWriter(casinoInfo);
@@ -157,10 +177,7 @@ public class GameManager {
 		appMenu.fileSaved();
 	}
 	
-	
-	
 
-	
 	
 //playerRecords management	
 
@@ -168,6 +185,11 @@ public class GameManager {
 	// use for player set up at game start
 	// also use for search submenu
 	// if return value == -1, player was not found
+	/**
+	 * Searches playerRecords for a specified player by name
+	 * @param name a String specifying the target player's name
+	 * @return the relevant Player object if found, a null Player object if not found
+	 */
 	public Player findPlayer(String name) {
 		String targetPlayer = new String(name);
 		
@@ -181,15 +203,12 @@ public class GameManager {
 		}
 		return searchResult;
 	}
-	
-	//add player to playerRecords
-	public Player createPlayerRecord(String name, double balance, int wins) {
-		Player currentPlayer = new Player(name, balance, wins);
-		playerRecords.add(currentPlayer);
-		return currentPlayer;
-	}
-	
-	//set True if player is returning player
+
+	/**
+	 * Use before calling createPlayerRecord() to indicate to BlackjackInterface if a Player object is returning or new
+	 * @param p a Player object
+	 * @return true if p contains existing player data (existing player), false if p is null (new player)
+	 */
   	public boolean returningPlayer(Player p) {
   		boolean returningPlayer;
   		if (p != null) {
@@ -200,9 +219,27 @@ public class GameManager {
   		return returningPlayer;
   	}
 	
+  	/**
+  	 * Create a new player record and add Player to playerRecord ArrayList
+  	 * @param name String of player name
+  	 * @param balance double of balance to instantiate Player with
+  	 * @param wins int of wins to instantiate Player with
+  	 * @return Player object of created player
+  	 */
+	public Player createPlayerRecord(String name, double balance, int wins) {
+		Player currentPlayer = new Player(name, balance, wins);
+		this.playerRecords.add(currentPlayer);
+		return currentPlayer;
+	}
+	
 	
 	// setting up current player when BlackjackGame starts, passing player info back to BlackjackGame.
-	// only passes back balance because balance can go up or down, numOfWins will only be added to after gameplay ends
+	/**
+	 * Calls findPlayer(name) and createPlayerRecord(name,balance,wins) to set up existing and new players when BlackjackGame game starts.
+	 * 
+	 * @param name accepts a String of the user's name, can be the name of a new OR returning player
+	 * @return currentPlayer as Player object, pass this to BlackjackGame.initializeGame()
+	 */
 	public Player setUpPlayer(String name) {
 		Player currentPlayer = findPlayer(name);
 		if (currentPlayer != null) {
@@ -213,9 +250,11 @@ public class GameManager {
 		return currentPlayer;
 	}
 	
-	
-
-	
+	/**
+	 * Iterates over an ArrayList of Player objects to sort them into a new list ranked by wins.
+	 * @param playerRecords the ArrayList of all playerRecords stored in GameManager; could be a subset ArrayList of Player objects if desired
+	 * @return ArrayList of Player objects sorted by number of wins
+	 */
 	public ArrayList<Player> findTopPlayers(ArrayList<Player> playerRecords) {
 		ArrayList<Player> topPlayers = new ArrayList<Player>();
 		int listLength = 5;
